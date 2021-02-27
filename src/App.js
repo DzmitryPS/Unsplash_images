@@ -5,10 +5,13 @@ import Card from './components/Card';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
 
+
+
+
 const api = createApi({
-  
   accessKey: process.env.REACT_APP_ACCESS_KEY
 });
+
 
 const Div = styled.div`
 display: grid;
@@ -30,19 +33,33 @@ function App() {
   const [search, setSeacrch] =useState('');
   const [data, setPhotosResponse] = useState(null);
   const [apiLoaded, setApiLoaded] = useState(false);
+   const [option, setOption] =useState([])
 
 
   const handleForm =(event)=>{
     event.preventDefault();
     setApiLoaded(false);
-
+      // localStorage.clear()
+     let myKey = localStorage.length;
     for(let key in localStorage){
-      if(!localStorage.hasOwnProperty(search)){
-      localStorage.setItem(search, search);
+      if(!localStorage.hasOwnProperty(search) && search){
+      localStorage.setItem(search, myKey);
+
+      let copyOption = []
+        copyOption = option
+        if(option.length < 5){
+          copyOption.push(search)
+          setOption(copyOption)
+        }else{
+          copyOption.shift()
+          copyOption.push(search)
+          setOption(copyOption)
+        }
+
       continue;
       }
     }
-
+ 
     api.search
       .getPhotos({ query: search, orientation: "landscape" })
       .then(result => {
@@ -55,9 +72,14 @@ function App() {
 
 
   }
-   
-  useEffect(() => {
 
+  useEffect(() => {
+    let options = Object.keys(localStorage)
+    if(options.length <= 5){
+      setOption(options)
+    }else{
+    setOption(options.slice(options.length - 5))}
+  
     api.photos
       .getRandom({count: 10})
       .then(result => {
@@ -68,7 +90,6 @@ function App() {
         console.log("something went wrong!");
       });
   }, []);
-
 
 
   return (
