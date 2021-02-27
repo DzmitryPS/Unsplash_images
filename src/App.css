@@ -36,3 +36,28 @@
     transform: rotate(360deg);
   }
 }
+
+.loading{
+  position: absolute;
+  margin-top:200px
+}
+
+.credit {
+  font-size: 12px;
+  line-height: 15px;
+  text-decoration-line: underline;
+  color: #b3b3b3;
+}
+
+.img {
+  position: relative;
+  margin:auto;
+  margin-bottom: 4px;
+  width: 100%;
+  min-height: 300px;
+  object-fit: cover;
+}
+
+.form{
+  margin: 10px;
+}
