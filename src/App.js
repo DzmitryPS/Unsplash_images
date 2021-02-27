@@ -3,8 +3,7 @@ import './App.css';
 import React, { useEffect, useState } from "react";
 import Card from './components/Card';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import styled from 'styled-components'
-import TextInput from 'react-autocomplete-input';
+import styled from 'styled-components';
 
 const api = createApi({
   
@@ -32,12 +31,17 @@ function App() {
   const [data, setPhotosResponse] = useState(null);
   const [apiLoaded, setApiLoaded] = useState(false);
 
+
   const handleForm =(event)=>{
     event.preventDefault();
     setApiLoaded(false);
-     
-      let keyName=localStorage.length
-     localStorage.setItem(keyName, search);
+
+    for(let key in localStorage){
+      if(!localStorage.hasOwnProperty(search)){
+      localStorage.setItem(search, search);
+      continue;
+      }
+    }
 
     api.search
       .getPhotos({ query: search, orientation: "landscape" })
@@ -69,13 +73,12 @@ function App() {
 
   return (
     <div className="App">
-     <form onSubmit={handleForm} handleKeyPress={handleForm} className="form">
-       <input
+     <form onSubmit={handleForm} className="form">
+     <input
         value={search}
         onChange={(event)=>setSeacrch(event.target.value)}
         placeholder='search'
         />
-        <TextInput/>
         <button>Search</button>
      </form>
 
