@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import Card from './components/Card';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
-
-
+import Autosuggest from 'react-autosuggest';
 
 
 const api = createApi({
@@ -30,7 +29,7 @@ grid-template-rows: repeat(auto-fill, auto);
 
 function App() {
    
-  const [search, setSeacrch] =useState('');
+  const [search, setSearch] =useState('');
   const [data, setPhotosResponse] = useState(null);
   const [apiLoaded, setApiLoaded] = useState(false);
    const [option, setOption] =useState([])
@@ -92,14 +91,16 @@ function App() {
   }, []);
 
 
+
   return (
     <div className="App">
      <form onSubmit={handleForm} className="form">
      <input
         value={search}
-        onChange={(event)=>setSeacrch(event.target.value)}
+        onChange={(event)=>setSearch(event.target.value)}
         placeholder='search'
         />
+        
         <button>Search</button>
      </form>
 
