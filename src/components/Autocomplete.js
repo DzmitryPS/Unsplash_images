@@ -9,6 +9,11 @@ const Div = styled.div`
 li{
 cursor: pointer;
 list-style:none;
+font-family: monospace;
+padding-top:3px;
+:hover{
+    color:#7FDBFF;
+}
 }
 .suggestions{
     position: absolute;
@@ -56,7 +61,7 @@ class Autocomplete extends Component {
          <ul class="suggestions">
             {this.props.suggestions.map((suggestion, index) => {
               return (
-                <li  key={suggestion}>
+                <li  key={index} onClick={this.props.onClick}>
                   {suggestion}
                 </li>
               );

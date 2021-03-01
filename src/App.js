@@ -1,16 +1,24 @@
-import { createApi } from "unsplash-js";
 import './App.css';
 import React, { useEffect, useState } from "react";
 import Card from './components/Card';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
 import AutoComplete from './components/Autocomplete';
+import Button from '@material-ui/core/Button';
+import Unsplash, {toJson, createApi } from "unsplash-js";
+import { Redirect } from 'react-router-dom';
 
 
-const api = createApi({
-  accessKey: process.env.REACT_APP_ACCESS_KEY
-});
-
+const MainDiv= styled.div`
+form{
+  display:flex;
+  flex-direction: column;
+}
+.btn{
+  width:80px;
+  margin-top: 5px;
+}
+`
 
 const Div = styled.div`
 display: grid;
@@ -19,7 +27,7 @@ grid-template-rows: repeat(auto-fill, auto);
 gap: 33px 20px;
 justify-content: center;
 align-content: center;
-margin-top:20px;
+margin-top:30px;
 
 .container{
   margin: auto;
@@ -30,6 +38,36 @@ margin-top:20px;
   box-shadow: 3px 3px 3px #777;
 }
 `
+const Top=styled.div`
+display: flex;
+justify-content: space-between;
+
+.log_in{
+  height: 30px ;
+  margin: 10px;
+}
+`
+
+const api = createApi({
+  accessKey: process.env.REACT_APP_ACCESS_KEY,
+  secret: process.env.REACT_APP_ACCESS_KEY,
+  callbackUrl: 'urn:ietf:wg:oauth:2.0:oob',
+  headers: {
+    "Accept-Version": "v1"
+  }
+
+});
+
+// const unsplash = new Unsplash({
+//   applicationId: process.env.REACT_APP_ACCESS_KEY,
+//   secret: 'd47bcd8287983e24da69c37348b21bee55b4c808390413f52fa6aa545b11debc',
+//   callbackUrl: 'urn:ietf:wg:oauth:2.0:oob',
+//   headers: {
+//     "Accept-Version": "v1"
+//   }
+// });
+
+
 
 function App() {
    
@@ -39,16 +77,43 @@ function App() {
    const [option, setOption] = useState([]);
    const [filteredSuggestions, setFilter] =useState([]);
 
+   const auth=()=>{
+    
+   }
+
+   const startSearch=()=>{
+    api.search
+    .getPhotos({ query: search, orientation: "landscape" })
+    .then(result => {
+      setPhotosResponse(result.response.results);
+      setApiLoaded(true)
+    })
+    .catch(() => {
+      console.log("something went wrong!");
+    });
+   }
+
+   const getRandom=()=>{
+    api.photos
+    .getRandom({count: 10})
+    .then(result => {
+      setPhotosResponse(result.response);
+      setApiLoaded(true)
+    })
+    .catch(() => {
+      console.log("something went wrong!");
+    });
+   }
 
   const handleForm =(event)=>{
-    //if empty...
+    search == '' ?
+    getRandom()  :
      event.preventDefault();
     setApiLoaded(false);
       // localStorage.clear()
-     let myKey = localStorage.length;
     for(let key in localStorage){
       if(!localStorage.hasOwnProperty(search) && search){
-      localStorage.setItem(search, myKey);
+      localStorage.setItem(search, search);
 
       let copyOption = []
         copyOption = option
@@ -62,46 +127,35 @@ function App() {
         } continue;
       }
     }
- 
-    api.search
-      .getPhotos({ query: search, orientation: "landscape" })
-      .then(result => {
-        setPhotosResponse(result.response.results);
-        setApiLoaded(true)
-      })
-      .catch(() => {
-        console.log("something went wrong!");
-      });
+    startSearch()
   }
 
   useEffect(() => {
+
+    
     let options = Object.keys(localStorage)
     if(options.length <= 5){
       setOption(options)
     }else{
     setOption(options.slice(options.length - 5))}
   
-    api.photos
-      .getRandom({count: 10})
-      .then(result => {
-        setPhotosResponse(result.response);
-        setApiLoaded(true)
-      })
-      .catch(() => {
-        console.log("something went wrong!");
-      });
+    getRandom()
   }, []);
 
 const onChange=(event)=>{
  setSearch(event.target.value);
 const filtered = option.filter(
   (option)=>option.toLowerCase().indexOf(search.toLowerCase()) > -1)
-  event.target.value == "" ? setFilter(option) : setFilter(filtered);
+  event.target.value == "" ? setFilter(option) : setFilter(filtered); 
 }
- 
+ function onClickToLi(e){
+   setSearch(e.target.innerText)
+   startSearch()
+ }
 
   return (
-    <div className="App">
+    <MainDiv className="App">
+      <Top>
      <form onSubmit={handleForm} className="form">
      {/* <input
         value={search}
@@ -113,11 +167,14 @@ const filtered = option.filter(
         onChange={onChange}
         onKeyDown={(event)=>setSearch(event.target.value)}
         value={search}
-        
+        onClick={onClickToLi}
         />
         <button className="btn">Search</button>
      </form>
-
+     <Button variant="contained" color="primary" className="log_in" onClick={auth}>
+     Log in
+    </Button>
+    </Top>
      {apiLoaded ?
      <Div>
       {data.map(photo=>(
@@ -129,7 +186,7 @@ const filtered = option.filter(
     : 
     <CircularProgress className="loading" />
      }
-     </div>
+     </MainDiv>
   );
 }
 
