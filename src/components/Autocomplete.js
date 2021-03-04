@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 
@@ -25,13 +24,11 @@ padding-top:3px;
 .suggestions li{
 overflow:hidden;
 height:0;
-
 -webkit-transition:all 0.3s ease-in-out;
 -moz-transition:all 0.3s ease-in-out;
 -o-transition:all 0.3s ease-in-out;
 transition:all 0.3s ease-in-out;
 }
-
 
 input[type="search"]:focus + .suggestions li{
 height:23px;
@@ -41,8 +38,6 @@ height:23px;
 `
 
 class Autocomplete extends Component {
-  static propTypes = {};
-  
 
   constructor(props) {
     super(props);
